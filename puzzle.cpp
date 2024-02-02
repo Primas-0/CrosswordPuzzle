@@ -1,11 +1,30 @@
 // UMBC - CMSC 341 - Spring 2024 - Proj0
 #include "puzzle.h"
 Puzzle::Puzzle(int rows, int cols){
+    if (rows >= 10 && cols >= 10) {
+        //if the requirements are met, initializes member variables
+        m_numRows = rows;
+        m_numCols = cols;
 
+        //allocates memory for 2D array
+        m_puzzle = new char*[m_numRows];
+        for (int i = 0; i < m_numRows; i++) {
+            m_puzzle[i] = new char[m_numCols];
+        }
+    } else {
+        //if the requirements are not met, creates an empty object
+        m_numRows = 0;
+        m_numCols = 0;
+        m_puzzle = nullptr;
+    }
 }
 
 Puzzle::~Puzzle(){
-
+    //deallocates 2D array (must be in reverse order of allocation)
+    for (int i = 0; i < m_numRows; i++) {
+        delete[] m_puzzle[i];
+    }
+    delete[] m_puzzle;
 }
 
 void Puzzle::clear(){
