@@ -2,7 +2,7 @@
 #include "puzzle.h"
 Puzzle::Puzzle(int rows, int cols){
     if (rows >= 10 && cols >= 10) {
-        //if the requirements are met, initialize member variables with passed-in values
+        //if requirements are met, initialize member variables with passed-in values
         m_numRows = rows;
         m_numCols = cols;
 
@@ -13,7 +13,7 @@ Puzzle::Puzzle(int rows, int cols){
             m_puzzle[i] = new char[m_numCols];
         }
     } else {
-        //if the requirements are not met, create an empty object
+        //if requirements are not met, create an empty object
         m_numRows = 0;
         m_numCols = 0;
         m_puzzle = nullptr;
@@ -40,9 +40,26 @@ void Puzzle::clear(){
 }
 
 bool Puzzle::reCreate(int rows, int cols, int seed){
-    //destruct
-    //construct
-    //fill
+    if (rows >= 10 && cols >= 10) {
+        //if requirements are met
+        deallocPuzzle(); //destroy current object
+
+        //construct new object with passed-in values
+        m_numRows = rows;
+        m_numCols = cols;
+        m_puzzle = new char*[m_numRows];
+        for (int i = 0; i < m_numRows; i++) {
+            m_puzzle[i] = new char[m_numCols];
+        }
+
+        //fill array with random data
+        fill(seed);
+
+        return true;
+    } else {
+        //if requirements are not met, make no changes to current object and return false
+        return false;
+    }
 }
 
 void Puzzle::fill(int seed){
@@ -96,7 +113,7 @@ bool Puzzle::appendRight(const Puzzle& rhs){
         //deallocate original puzzle
         deallocPuzzle();
 
-        //update member array and variables
+        //re-initialize current object with new values
         m_puzzle = newPuzzle;
         m_numCols = newCols;
 
@@ -117,14 +134,14 @@ bool Puzzle::appendBottom(const Puzzle& bottom){
             newPuzzle[i] = new char[m_numCols];
         }
 
-        //loop through original puzzle and copy over data to left side of new puzzle
+        //loop through original puzzle and copy over data to top part of new puzzle
         for (int i = 0; i < m_numRows; i++) {
             for (int j = 0; j < m_numCols; j++) {
                 m_puzzle[i][j] = newPuzzle[i][j];
             }
         }
 
-        //loop though passed-in puzzle and copy over data to right side of new puzzle
+        //loop though passed-in puzzle and copy over data to bottom part of new puzzle
         for (int i = 0; i < bottom.m_numRows; i++) {
             for (int j = 0; j < bottom.m_numCols; j++) {
                 bottom.m_puzzle[i][j] = newPuzzle[m_numRows + i][j];
@@ -134,7 +151,7 @@ bool Puzzle::appendBottom(const Puzzle& bottom){
         //deallocate original puzzle
         deallocPuzzle();
 
-        //update member array and variables
+        //re-initialize current object with new values
         m_puzzle = newPuzzle;
         m_numRows = newRows;
 
