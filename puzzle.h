@@ -40,7 +40,7 @@ private:
     /******************************************
     * Private function declarations go here! *
     ******************************************/
-
+    void deallocPuzzle();
 };
 
 enum RANDOM {UNIFORMINT, UNIFORMREAL, NORMAL, SHUFFLE};
