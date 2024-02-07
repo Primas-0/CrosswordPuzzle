@@ -44,7 +44,7 @@ bool Puzzle::reCreate(int rows, int cols, int seed){
         //if requirements are met
         deallocPuzzle(); //destroy current object
 
-        //construct new object with passed-in values
+        //re-construct current object with passed-in values
         m_numRows = rows;
         m_numCols = cols;
         m_puzzle = new char*[m_numRows];
@@ -79,7 +79,20 @@ void Puzzle::fill(int seed){
 }
 
 Puzzle::Puzzle(const Puzzle& rhs){
+    //construct current object with same dimensions as rhs
+    m_numRows = rhs.m_numRows;
+    m_numCols = rhs.m_numCols;
+    m_puzzle = new char*[m_numRows];
+    for (int i = 0; i < m_numRows; i++) {
+        m_puzzle[i] = new char[m_numCols];
+    }
 
+    //make current object a deep copy of rhs
+    for (int i = 0; i < m_numRows; i++) {
+        for (int j = 0; j < m_numCols; j++) {
+            m_puzzle[i][j] = rhs.m_puzzle[i][j];
+        }
+    }
 }
 
 const Puzzle& Puzzle::operator=(const Puzzle& rhs){
@@ -99,21 +112,21 @@ bool Puzzle::appendRight(const Puzzle& rhs){
         //loop through original puzzle and copy over data to left side of new puzzle
         for (int i = 0; i < m_numRows; i++) {
             for (int j = 0; j < m_numCols; j++) {
-                m_puzzle[i][j] = newPuzzle[i][j];
+                newPuzzle[i][j] = m_puzzle[i][j];
             }
         }
 
         //loop though passed-in puzzle and copy over data to right side of new puzzle
         for (int i = 0; i < rhs.m_numRows; i++) {
             for (int j = 0; j < rhs.m_numCols; j++) {
-                rhs.m_puzzle[i][j] = newPuzzle[i][m_numCols + j];
+                newPuzzle[i][m_numCols + j] = rhs.m_puzzle[i][j];
             }
         }
 
         //deallocate original puzzle
         deallocPuzzle();
 
-        //re-initialize current object with new values
+        //re-initialize current object with new information
         m_puzzle = newPuzzle;
         m_numCols = newCols;
 
@@ -137,14 +150,14 @@ bool Puzzle::appendBottom(const Puzzle& bottom){
         //loop through original puzzle and copy over data to top part of new puzzle
         for (int i = 0; i < m_numRows; i++) {
             for (int j = 0; j < m_numCols; j++) {
-                m_puzzle[i][j] = newPuzzle[i][j];
+                newPuzzle[i][j] = m_puzzle[i][j];
             }
         }
 
         //loop though passed-in puzzle and copy over data to bottom part of new puzzle
         for (int i = 0; i < bottom.m_numRows; i++) {
             for (int j = 0; j < bottom.m_numCols; j++) {
-                bottom.m_puzzle[i][j] = newPuzzle[m_numRows + i][j];
+                newPuzzle[m_numRows + i][j] = bottom.m_puzzle[i][j];
             }
         }
 
