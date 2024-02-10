@@ -7,7 +7,7 @@ Puzzle::Puzzle(int rows, int cols){
         m_numCols = cols;
 
         //allocate memory for 2D array
-        m_puzzle = new char*[m_numRows]; //array of pointers
+        m_puzzle = new char*[m_numRows]; //m_puzzle is a pointer to an array of pointers
         for (int i = 0; i < m_numRows; i++) {
             //each pointer points to a separate array of chars
             m_puzzle[i] = new char[m_numCols];
@@ -42,7 +42,7 @@ void Puzzle::clear(){
 bool Puzzle::reCreate(int rows, int cols, int seed){
     if (rows >= 10 && cols >= 10) {
         //if requirements are met
-        deallocPuzzle(); //destroy current object
+        deallocPuzzle(); //deallocate current object
 
         //re-construct current object with passed-in values
         m_numRows = rows;
@@ -56,24 +56,64 @@ bool Puzzle::reCreate(int rows, int cols, int seed){
         fill(seed);
 
         return true;
-    } else {
-        //if requirements are not met, make no changes to current object and return false
-        return false;
     }
+    //if requirements are not met, make no changes to current object and return false
+    return false;
 }
 
 void Puzzle::fill(int seed){
-    int randCharIndex = 0; //where random number will be stored
+    //where random values will be stored
+    int randCharIndex = 0;
+    bool randDecision = false;
 
-    //create instance of Random class and set seed
-    Random randObject(MIN, MAX, UNIFORMINT);
-    randObject.setSeed(seed);
+    //we will be iterating through each column multiple times due to the structure of the for loops, so we need arrays to keep track of them
+    int randFrequencyColArray[m_numCols]; //keeps track of how many separators there should be in each column
+    int colSeparatorCountArray[m_numCols]; //keeps track of the current number of separators in each column
 
-    //fill puzzle with random characters
+    //initialize arrays to zero to avoid garbage values
+    for (int i = 0; i < m_numCols; i++) {
+        randFrequencyColArray[i] = 0;
+        colSeparatorCountArray[i] = 0;
+    }
+
+    //we will only be iterating through each row once
+    //so the row separator count does not need to be in an array (can simply be reset to zero each time)
+    int rowSeparatorCount = 0;
+
+    //create instances of Random class and set seeds
+    Random randObjectForChar(MIN, MAX, UNIFORMINT);
+    randObjectForChar.setSeed(seed);
+
+    Random randObjectForColFrequency(0, 3, UNIFORMINT);
+    randObjectForColFrequency.setSeed(seed);
+
+    Random randObjectToDecide(0, 1, UNIFORMINT);
+    randObjectToDecide.setSeed(seed);
+
+    //populates array with a random intended number of separators for each column
+    for (int i = 0; i < m_numCols; i++) {
+        randFrequencyColArray[i] = randObjectForColFrequency.getRandNum();
+    }
+
+    //fill puzzle
     for (int i = 0; i < m_numRows; i++) {
+        rowSeparatorCount = 0; //reset count of separators in a row for each new row
         for (int j = 0; j < m_numCols; j++) {
-            randCharIndex = randObject.getRandNum();
-            m_puzzle[i][j] = ALPHA[randCharIndex];
+            //randomly choose between inserting a letter or separator
+            randDecision = (randObjectToDecide.getRandNum() == 1);
+
+            if (randDecision && (colSeparatorCountArray[j] < randFrequencyColArray[j]) && rowSeparatorCount <= 3) {
+                //if decision is true and separator counts are below threshold, insert separator into cell
+                m_puzzle[i][j] = '#';
+
+                //increment separator counts
+                rowSeparatorCount++;
+                colSeparatorCountArray[j]++;
+            } else {
+                //otherwise, insert a random letter into cell
+                randCharIndex = randObjectForChar.getRandNum();
+                m_puzzle[i][j] = ALPHA[randCharIndex];
+            }
         }
     }
 }
@@ -96,7 +136,27 @@ Puzzle::Puzzle(const Puzzle& rhs){
 }
 
 const Puzzle& Puzzle::operator=(const Puzzle& rhs){
+    if (this != &rhs) {
+        //if not self-assignment, change current object
+        deallocPuzzle(); //deallocate current object
 
+        //re-construct current object with same dimensions as rhs
+        m_numRows = rhs.m_numRows;
+        m_numCols = rhs.m_numCols;
+        m_puzzle = new char*[m_numRows];
+        for (int i = 0; i < m_numRows; i++) {
+            m_puzzle[i] = new char[m_numCols];
+        }
+
+        //make current object a deep copy of rhs
+        for (int i = 0; i < m_numRows; i++) {
+            for (int j = 0; j < m_numCols; j++) {
+                m_puzzle[i][j] = rhs.m_puzzle[i][j];
+            }
+        }
+    }
+    //return current object
+    return *this;
 }
 
 bool Puzzle::appendRight(const Puzzle& rhs){
@@ -131,10 +191,9 @@ bool Puzzle::appendRight(const Puzzle& rhs){
         m_numCols = newCols;
 
         return true;
-    } else {
-        //if requirements for append not met, do nothing and return false
-        return false;
     }
+    //if requirements for append not met, do nothing and return false
+    return false;
 }
 
 bool Puzzle::appendBottom(const Puzzle& bottom){
@@ -164,15 +223,14 @@ bool Puzzle::appendBottom(const Puzzle& bottom){
         //deallocate original puzzle
         deallocPuzzle();
 
-        //re-initialize current object with new values
+        //re-initialize current object with new information
         m_puzzle = newPuzzle;
         m_numRows = newRows;
 
         return true;
-    } else {
-        //if requirements for append not met, do nothing and return false
-        return false;
     }
+    //if requirements for append not met, do nothing and return false
+    return false;
 }
 
 void Puzzle::deallocPuzzle() {

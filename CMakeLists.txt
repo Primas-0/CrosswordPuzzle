@@ -9,4 +9,4 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 add_executable(Project0
         puzzle.h
         puzzle.cpp
-        driver.cpp)
+        mytest.cpp)
