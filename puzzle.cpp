@@ -66,7 +66,10 @@ void Puzzle::fill(int seed){
     int randCharIndex = 0;
     bool randDecision = false;
 
-    //we will be iterating through each column multiple times due to the structure of the for loops, so we need arrays to keep track of them
+    //we will only be iterating through each row once, so the row count can be reset to zero each time (no array needed)
+    int rowSeparatorCount = 0;
+
+    //we will be iterating through each column multiple times, so we need arrays to keep track of them
     int randFrequencyColArray[m_numCols]; //keeps track of how many separators there should be in each column
     int colSeparatorCountArray[m_numCols]; //keeps track of the current number of separators in each column
 
@@ -75,10 +78,6 @@ void Puzzle::fill(int seed){
         randFrequencyColArray[i] = 0;
         colSeparatorCountArray[i] = 0;
     }
-
-    //we will only be iterating through each row once
-    //so the row separator count does not need to be in an array (can simply be reset to zero each time)
-    int rowSeparatorCount = 0;
 
     //create instances of Random class and set seeds
     Random randObjectForChar(MIN, MAX, UNIFORMINT);
@@ -102,7 +101,7 @@ void Puzzle::fill(int seed){
             //randomly choose between inserting a letter or separator
             randDecision = (randObjectToDecide.getRandNum() == 1);
 
-            if (randDecision && (colSeparatorCountArray[j] < randFrequencyColArray[j]) && rowSeparatorCount <= 3) {
+            if (randDecision && (colSeparatorCountArray[j] < randFrequencyColArray[j]) && (rowSeparatorCount < 3)) {
                 //if decision is true and separator counts are below threshold, insert separator into cell
                 m_puzzle[i][j] = '#';
 
