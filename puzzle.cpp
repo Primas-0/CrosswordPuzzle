@@ -96,7 +96,7 @@ void Puzzle::fill(int seed){
 
     //fill puzzle
     for (int i = 0; i < m_numRows; i++) {
-        rowSeparatorCount = 0; //reset count of separators in a row for each new row
+        rowSeparatorCount = 0; //reset row separator count for each new row
         for (int j = 0; j < m_numCols; j++) {
             //randomly choose between inserting a letter or separator
             randDecision = (randObjectToDecide.getRandNum() == 1);
