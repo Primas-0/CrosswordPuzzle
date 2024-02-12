@@ -1,7 +1,7 @@
 // UMBC - CMSC 341 - Spring 2024 - Proj0
 #include "puzzle.h"
 Puzzle::Puzzle(int rows, int cols){
-    if (rows >= 10 && cols >= 10) {
+    if (rows >= DEFSIZE && cols >= DEFSIZE) {
         //if requirements are met, initialize member variables with passed-in values
         m_numRows = rows;
         m_numCols = cols;
@@ -40,7 +40,7 @@ void Puzzle::clear(){
 }
 
 bool Puzzle::reCreate(int rows, int cols, int seed){
-    if (rows >= 10 && cols >= 10) {
+    if (rows >= DEFSIZE && cols >= DEFSIZE) {
         //if requirements are met
         deallocPuzzle(); //deallocate current object
 
