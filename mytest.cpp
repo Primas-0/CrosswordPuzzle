@@ -12,14 +12,12 @@ public:
 
     bool testFill(int seed);
 
-    bool testCopyConstructorError(const Puzzle& puzzleToCopy);
-    bool testCopyConstructorEdge(const Puzzle& puzzleToCopy);
-    bool testCopyConstructorNormal(const Puzzle& puzzleToCopy);
+    bool testCopyConstructorError(const Puzzle& original);
+    bool testCopyConstructorNormal(const Puzzle& original);
 
-    bool testOverloadedAssignmentError(const Puzzle& puzzleToCopy);
-    bool testOverloadedAssignmentEdge(const Puzzle& puzzleToCopy);
-    bool testOverloadedAssignmentNormal(const Puzzle& puzzleToCopy);
-    bool testOverloadedAssignmentToSelf(const Puzzle& puzzleToCopy);
+    bool testOverloadedAssignmentToSelf(const Puzzle& original);
+    bool testOverloadedAssignmentEdge(const Puzzle& original);
+    bool testOverloadedAssignmentNormal(const Puzzle& original);
 
     bool testAppendRightError(const Puzzle& puzzleToAppend);
     bool testAppendRightNormal(const Puzzle& puzzleToAppend);
@@ -73,13 +71,13 @@ int main() {
         cout << "\treCreate failed!" << endl;
     }
     cout << "Testing reCreate (edge case) - creates memory, initializes all member variables to the proper values:" << endl;
-    if (tester.testReCreateEdgeAndNormal(10, 10, time(0))) {
+    if (tester.testReCreateEdgeAndNormal(10, 10, 1 + time(0))) {
         cout << "\treCreate passed!" << endl;
     } else {
         cout << "\treCreate failed!" << endl;
     }
     cout << "Testing reCreate (normal case) - creates memory, initializes all member variables to the proper values:" << endl;
-    if (tester.testReCreateEdgeAndNormal(12, 14, time(0))) {
+    if (tester.testReCreateEdgeAndNormal(12, 14, 2 + time(0))) {
         cout << "\treCreate passed!" << endl;
     } else {
         cout << "\treCreate failed!" << endl;
@@ -87,14 +85,27 @@ int main() {
 
     //fill test
     cout << "\nTesting Fill - properly populates array with letters and separators:" << endl;
-    if (tester.testFill(time(0))) {
+    if (tester.testFill(3 + time(0))) {
         cout << "\tFill passed!" << endl;
     } else {
         cout << "\tFill failed!" << endl;
     }
 
     //copy constructor tests
-
+    Puzzle puzzle1(0, 2);
+    cout << "\nTesting Copy Constructor (error case) - create empty copy:" << endl;
+    if (tester.testCopyConstructorError(puzzle1)) {
+        cout << "\tCopy Constructor passed!" << endl;
+    } else {
+        cout << "\tCopy Constructor failed!" << endl;
+    }
+    Puzzle puzzle2(13, 15);
+    cout << "Testing Copy Constructor (normal case) - create deep copy:" << endl;
+    if (tester.testCopyConstructorNormal(puzzle2)) {
+        cout << "\tCopy Constructor passed!" << endl;
+    } else {
+        cout << "\tCopy Constructor failed!" << endl;
+    }
 
     //assignment operator tests
 
@@ -211,10 +222,32 @@ bool Tester::testFill(int seed) {
 }
 
 //TODO: copy constructor test functions
-bool Tester::testCopyConstructorError(const Puzzle &puzzleToCopy) {
-    Puzzle copy(puzzleToCopy);
+bool Tester::testCopyConstructorError(const Puzzle &original) {
+    Puzzle copy(original);
 
-    return true;
+    if (copy.m_puzzle != original.m_puzzle && copy.m_numRows == 0 && copy.m_numCols == 0) {
+        return true;
+    }
+    return false;
+}
+
+bool Tester::testCopyConstructorNormal(const Puzzle &original) {
+    Puzzle copy(original);
+
+    if (copy.m_puzzle != original.m_puzzle
+        && copy.m_numRows == original.m_numRows && copy.m_numCols == original.m_numCols) {
+        //proceed if the objects point to different memory locations and the dimensions match
+        for (int i = 0; i < copy.m_numRows; i++) {
+            for (int j = 0; j < copy.m_numCols; j++) {
+                if (copy.m_puzzle[i] != original.m_puzzle[i] && copy.m_puzzle[i][j] == original.m_puzzle[i][j]) {
+                    //test passes if all row pointers are different and all the array data is identical
+                    return true;
+                }
+            }
+        }
+    }
+    //test fails otherwise
+    return false;
 }
 
 
