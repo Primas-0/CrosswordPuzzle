@@ -10,7 +10,7 @@ Puzzle::Puzzle(int rows, int cols){
         m_puzzle = new char*[m_numRows]; //m_puzzle is a pointer to an array of pointers
         for (int i = 0; i < m_numRows; i++) {
             //each pointer points to a separate array of chars
-            m_puzzle[i] = new char[m_numCols];
+            m_puzzle[i] = new char[m_numCols]();
         }
     } else {
         //if requirements are not met, create an empty object
@@ -49,7 +49,7 @@ bool Puzzle::reCreate(int rows, int cols, int seed){
         m_numCols = cols;
         m_puzzle = new char*[m_numRows];
         for (int i = 0; i < m_numRows; i++) {
-            m_puzzle[i] = new char[m_numCols];
+            m_puzzle[i] = new char[m_numCols]();
         }
 
         //fill array with random data
@@ -123,7 +123,7 @@ Puzzle::Puzzle(const Puzzle& rhs){
     m_numCols = rhs.m_numCols;
     m_puzzle = new char*[m_numRows];
     for (int i = 0; i < m_numRows; i++) {
-        m_puzzle[i] = new char[m_numCols];
+        m_puzzle[i] = new char[m_numCols]();
     }
 
     //make current object a deep copy of rhs
@@ -144,7 +144,7 @@ const Puzzle& Puzzle::operator=(const Puzzle& rhs){
         m_numCols = rhs.m_numCols;
         m_puzzle = new char*[m_numRows];
         for (int i = 0; i < m_numRows; i++) {
-            m_puzzle[i] = new char[m_numCols];
+            m_puzzle[i] = new char[m_numCols]();
         }
 
         //make current object a deep copy of rhs
@@ -165,7 +165,7 @@ bool Puzzle::appendRight(const Puzzle& rhs){
         //allocate new puzzle with updated rows and columns
         char** newPuzzle = new char*[m_numRows];
         for (int i = 0; i < m_numRows; i++) {
-            newPuzzle[i] = new char[newCols];
+            newPuzzle[i] = new char[newCols]();
         }
 
         //loop through original puzzle and copy over data to left side of new puzzle
@@ -202,7 +202,7 @@ bool Puzzle::appendBottom(const Puzzle& bottom){
         //allocate new puzzle with updated rows and columns
         char** newPuzzle = new char*[newRows];
         for (int i = 0; i < m_numRows; i++) {
-            newPuzzle[i] = new char[m_numCols];
+            newPuzzle[i] = new char[m_numCols]();
         }
 
         //loop through original puzzle and copy over data to top part of new puzzle
