@@ -215,7 +215,7 @@ bool Puzzle::appendBottom(const Puzzle &bottom) {
 
         //allocate new puzzle with updated rows and columns
         char **newPuzzle = new char *[newRows];
-        for (int i = 0; i < m_numRows; i++) {
+        for (int i = 0; i < newRows; i++) {
             newPuzzle[i] = new char[m_numCols]();
         }
 
