@@ -157,7 +157,7 @@ int main() {
     }
     Puzzle puzzle7(14, 10);
     puzzle7.fill(9 + time(0));
-    cout << "Testing appendRight (edge case, normal to empty) - :" << endl;
+    cout << "Testing appendRight (edge case, normal to empty) - overwrites empty object with normal:" << endl;
     if (tester.testAppendRightNormalToEmpty(puzzle7)) {
         cout << "\tappendRight passed!" << endl;
     } else {
@@ -199,7 +199,7 @@ int main() {
     }
     Puzzle puzzle12(14, 10);
     puzzle12.fill(13 + time(0));
-    cout << "Testing appendBottom (edge case, normal to empty) - :" << endl;
+    cout << "Testing appendBottom (edge case, normal to empty) - overwrites empty object with normal:" << endl;
     if (tester.testAppendBottomNormalToEmpty(puzzle12)) {
         cout << "\tappendBottom passed!" << endl;
     } else {
