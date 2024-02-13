@@ -1,13 +1,12 @@
 // UMBC - CMSC 341 - Spring 2024 - Proj0
 #include "puzzle.h"
-Puzzle::Puzzle(int rows, int cols){
+
+Puzzle::Puzzle(int rows, int cols) {
     if (rows >= DEFSIZE && cols >= DEFSIZE) {
-        //if requirements are met, initialize member variables with passed-in values
         m_numRows = rows;
         m_numCols = cols;
 
-        //allocate memory for 2D array
-        m_puzzle = new char*[m_numRows]; //m_puzzle is a pointer to an array of pointers
+        m_puzzle = new char *[m_numRows];
         for (int i = 0; i < m_numRows; i++) {
             //each pointer points to a separate array of chars
             m_puzzle[i] = new char[m_numCols]();
@@ -20,8 +19,7 @@ Puzzle::Puzzle(int rows, int cols){
     }
 }
 
-Puzzle::~Puzzle(){
-    //deallocate 2D array (should be done inside-out)
+Puzzle::~Puzzle() {
     for (int i = 0; i < m_numRows; i++) {
         //deallocate each array of chars
         delete[] m_puzzle[i];
@@ -29,8 +27,7 @@ Puzzle::~Puzzle(){
     delete[] m_puzzle; //deallocate the array of pointers
 }
 
-void Puzzle::clear(){
-    //deallocate all memory
+void Puzzle::clear() {
     deallocPuzzle();
 
     //clear the current object to an empty object
@@ -39,15 +36,14 @@ void Puzzle::clear(){
     m_puzzle = nullptr;
 }
 
-bool Puzzle::reCreate(int rows, int cols, int seed){
+bool Puzzle::reCreate(int rows, int cols, int seed) {
     if (rows >= DEFSIZE && cols >= DEFSIZE) {
-        //if requirements are met
-        deallocPuzzle(); //deallocate current object
+        deallocPuzzle();
 
         //re-construct current object with passed-in values
         m_numRows = rows;
         m_numCols = cols;
-        m_puzzle = new char*[m_numRows];
+        m_puzzle = new char *[m_numRows];
         for (int i = 0; i < m_numRows; i++) {
             m_puzzle[i] = new char[m_numCols]();
         }
@@ -61,7 +57,7 @@ bool Puzzle::reCreate(int rows, int cols, int seed){
     return false;
 }
 
-void Puzzle::fill(int seed){
+void Puzzle::fill(int seed) {
     //where random values will be stored
     int randCharIndex = 0;
     bool randDecision = false;
@@ -96,7 +92,7 @@ void Puzzle::fill(int seed){
 
     //fill puzzle
     for (int i = 0; i < m_numRows; i++) {
-        rowSeparatorCount = 0; //reset row separator count for each new row
+        rowSeparatorCount = 0;
         for (int j = 0; j < m_numCols; j++) {
             //randomly choose between inserting a letter or separator
             randDecision = (randObjectToDecide.getRandNum() == 1);
@@ -105,7 +101,6 @@ void Puzzle::fill(int seed){
                 //if decision is true and separator counts are below threshold, insert separator into cell
                 m_puzzle[i][j] = '#';
 
-                //increment separator counts
                 rowSeparatorCount++;
                 colSeparatorCountArray[j]++;
             } else {
@@ -117,11 +112,11 @@ void Puzzle::fill(int seed){
     }
 }
 
-Puzzle::Puzzle(const Puzzle& rhs){
+Puzzle::Puzzle(const Puzzle &rhs) {
     //construct current object with same dimensions as rhs
     m_numRows = rhs.m_numRows;
     m_numCols = rhs.m_numCols;
-    m_puzzle = new char*[m_numRows];
+    m_puzzle = new char *[m_numRows];
     for (int i = 0; i < m_numRows; i++) {
         m_puzzle[i] = new char[m_numCols]();
     }
@@ -134,15 +129,15 @@ Puzzle::Puzzle(const Puzzle& rhs){
     }
 }
 
-const Puzzle& Puzzle::operator=(const Puzzle& rhs){
+const Puzzle &Puzzle::operator=(const Puzzle &rhs) {
+    //if not self-assignment, change current object
     if (this != &rhs) {
-        //if not self-assignment, change current object
-        deallocPuzzle(); //deallocate current object
+        deallocPuzzle();
 
         //re-construct current object with same dimensions as rhs
         m_numRows = rhs.m_numRows;
         m_numCols = rhs.m_numCols;
-        m_puzzle = new char*[m_numRows];
+        m_puzzle = new char *[m_numRows];
         for (int i = 0; i < m_numRows; i++) {
             m_puzzle[i] = new char[m_numCols]();
         }
@@ -158,12 +153,12 @@ const Puzzle& Puzzle::operator=(const Puzzle& rhs){
     return *this;
 }
 
-bool Puzzle::appendRight(const Puzzle& rhs){
-    if (m_numRows == rhs.m_numRows || m_puzzle == nullptr || rhs.m_puzzle == nullptr) {
-        int newCols = m_numCols + rhs.m_numCols; //store updated column number
+bool Puzzle::appendRight(const Puzzle &rhs) {
+    if (m_numRows == rhs.m_numRows || rhs.m_puzzle == nullptr) {
+        int newCols = m_numCols + rhs.m_numCols;
 
         //allocate new puzzle with updated rows and columns
-        char** newPuzzle = new char*[m_numRows];
+        char **newPuzzle = new char *[m_numRows];
         for (int i = 0; i < m_numRows; i++) {
             newPuzzle[i] = new char[newCols]();
         }
@@ -182,7 +177,6 @@ bool Puzzle::appendRight(const Puzzle& rhs){
             }
         }
 
-        //deallocate original puzzle
         deallocPuzzle();
 
         //re-initialize current object with new information
@@ -191,16 +185,36 @@ bool Puzzle::appendRight(const Puzzle& rhs){
 
         return true;
     }
+
+    if (m_puzzle == nullptr) {
+        //re-construct current object with same dimensions as rhs
+        m_numRows = rhs.m_numRows;
+        m_numCols = rhs.m_numCols;
+        m_puzzle = new char *[m_numRows];
+        for (int i = 0; i < m_numRows; i++) {
+            m_puzzle[i] = new char[m_numCols]();
+        }
+
+        //make current object a deep copy of rhs
+        for (int i = 0; i < m_numRows; i++) {
+            for (int j = 0; j < m_numCols; j++) {
+                m_puzzle[i][j] = rhs.m_puzzle[i][j];
+            }
+        }
+
+        return true;
+    }
+
     //if requirements for append not met, do nothing and return false
     return false;
 }
 
-bool Puzzle::appendBottom(const Puzzle& bottom){
-    if (m_numCols == bottom.m_numCols || m_puzzle == nullptr || bottom.m_puzzle == nullptr) {
+bool Puzzle::appendBottom(const Puzzle &bottom) {
+    if (m_numCols == bottom.m_numCols || bottom.m_puzzle == nullptr) {
         int newRows = m_numRows + bottom.m_numRows; //store updated row number
 
         //allocate new puzzle with updated rows and columns
-        char** newPuzzle = new char*[newRows];
+        char **newPuzzle = new char *[newRows];
         for (int i = 0; i < m_numRows; i++) {
             newPuzzle[i] = new char[m_numCols]();
         }
@@ -219,7 +233,6 @@ bool Puzzle::appendBottom(const Puzzle& bottom){
             }
         }
 
-        //deallocate original puzzle
         deallocPuzzle();
 
         //re-initialize current object with new information
@@ -228,6 +241,26 @@ bool Puzzle::appendBottom(const Puzzle& bottom){
 
         return true;
     }
+
+    if (m_puzzle == nullptr) {
+        //re-construct current object with same dimensions as rhs
+        m_numRows = bottom.m_numRows;
+        m_numCols = bottom.m_numCols;
+        m_puzzle = new char *[m_numRows];
+        for (int i = 0; i < m_numRows; i++) {
+            m_puzzle[i] = new char[m_numCols]();
+        }
+
+        //make current object a deep copy of rhs
+        for (int i = 0; i < m_numRows; i++) {
+            for (int j = 0; j < m_numCols; j++) {
+                m_puzzle[i][j] = bottom.m_puzzle[i][j];
+            }
+        }
+
+        return true;
+    }
+
     //if requirements for append not met, do nothing and return false
     return false;
 }
@@ -241,19 +274,19 @@ void Puzzle::deallocPuzzle() {
 }
 
 
-void Puzzle::dump(){
-    int i=0;
-    int j=0;
+void Puzzle::dump() {
+    int i = 0;
+    int j = 0;
     cout << "   ";
-    for (int k=0;k<m_numCols;k++){
-        if ((k+1) < 10) cout << "0";
-        cout << (k+1) << " ";
+    for (int k = 0; k < m_numCols; k++) {
+        if ((k + 1) < 10) cout << "0";
+        cout << (k + 1) << " ";
     }
     cout << endl;
-    while(i<m_numRows){
-        if ((i+1) < 10) cout << "0";
-        cout << (i+1) << " ";
-        while(j<m_numCols){
+    while (i < m_numRows) {
+        if ((i + 1) < 10) cout << "0";
+        cout << (i + 1) << " ";
+        while (j < m_numCols) {
             if (m_puzzle[i][j] == '#')
                 cout << "\033[1;31m\u2731\033[0m" << "  ";   // this prints HEAVY ASTERISK as separators
             else
@@ -261,7 +294,7 @@ void Puzzle::dump(){
             j++;
         }
         cout << endl;
-        j=0;
+        j = 0;
         i++;
     }
     cout << endl;
