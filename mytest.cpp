@@ -20,17 +20,17 @@ public:
     bool testAssignmentOperatorEdge(const Puzzle& original);
     bool testAssignmentOperatorNormal(const Puzzle& original);
 
-    bool testAppendRightError(const Puzzle& puzzleToAppend);
-    bool testAppendRightNormal(const Puzzle& puzzleToAppend);
-    bool testAppendRightNormalToEmpty(const Puzzle& puzzleToAppend);
-    bool testAppendRightEmptyToNormal(const Puzzle& puzzleToAppend);
-    bool testAppendRightToSelf(const Puzzle& puzzleToAppend);
+    bool testAppendRightError(const Puzzle& puzzleRight);
+    bool testAppendRightNormal(const Puzzle& puzzleRight);
+    bool testAppendRightNormalToEmpty(const Puzzle& puzzleRight);
+    bool testAppendRightEmptyToNormal(const Puzzle& puzzleRight);
+    bool testAppendRightToSelf(const Puzzle& puzzleRight);
 
-    bool testAppendBottomError(const Puzzle& puzzleToAppend);
-    bool testAppendBottomNormal(const Puzzle& puzzleToAppend);
-    bool testAppendBottomNormalToEmpty(const Puzzle& puzzleToAppend);
-    bool testAppendBottomEmptyToNormal(const Puzzle& puzzleToAppend);
-    bool testAppendBottomToSelf(const Puzzle& puzzleToAppend);
+    bool testAppendBottomError(const Puzzle& puzzleBottom);
+    bool testAppendBottomNormal(const Puzzle& puzzleBottom);
+    bool testAppendBottomNormalToEmpty(const Puzzle& puzzleBottom);
+    bool testAppendBottomEmptyToNormal(const Puzzle& puzzleBottom);
+    bool testAppendBottomToSelf(const Puzzle& puzzleBottom);
 };
 
 int main() {
@@ -94,14 +94,15 @@ int main() {
 
     //copy constructor tests
     Puzzle puzzle1(0, 2);
-    cout << "\nTesting Copy Constructor (edge case) - create empty copy:" << endl;
+    cout << "\nTesting Copy Constructor (edge case) - creates empty copy:" << endl;
     if (tester.testCopyConstructorEdge(puzzle1)) {
         cout << "\tCopy Constructor passed!" << endl;
     } else {
         cout << "\tCopy Constructor failed!" << endl;
     }
     Puzzle puzzle2(13, 15);
-    cout << "Testing Copy Constructor (normal case) - create deep copy:" << endl;
+    puzzle2.fill(4 + time(0));
+    cout << "Testing Copy Constructor (normal case) - creates deep copy:" << endl;
     if (tester.testCopyConstructorNormal(puzzle2)) {
         cout << "\tCopy Constructor passed!" << endl;
     } else {
@@ -110,14 +111,15 @@ int main() {
 
     //assignment operator tests
     Puzzle puzzle3(-2, 0);
-    cout << "\nTesting Assignment Operator (edge case) - copy empty object to normal object (empty copy):" << endl;
+    cout << "\nTesting Assignment Operator (edge case) - copies empty object to normal object (empty copy):" << endl;
     if (tester.testAssignmentOperatorEdge(puzzle3)) {
         cout << "\tAssignment Operator passed!" << endl;
     } else {
         cout << "\tAssignment Operator failed!" << endl;
     }
     Puzzle puzzle4(16, 18);
-    cout << "Testing Assignment Operator (normal case) - create deep copy:" << endl;
+    puzzle4.fill(5 + time(0));
+    cout << "Testing Assignment Operator (normal case) - creates deep copy:" << endl;
     if (tester.testAssignmentOperatorNormal(puzzle4)) {
         cout << "\tAssignment Operator passed!" << endl;
     } else {
@@ -125,7 +127,14 @@ int main() {
     }
 
     //appendRight tests
-
+    Puzzle puzzle5(11, 11);
+    puzzle5.fill(6 + time(0));
+    cout << "\nTesting appendRight (error case) - does not modify the current object:" << endl;
+    if (tester.testAppendRightError(puzzle5)) {
+        cout << "\tappendRight passed!" << endl;
+    } else {
+        cout << "\tappendRight failed!" << endl;
+    }
 
     //appendBottom tests
 
@@ -275,20 +284,19 @@ bool Tester::testCopyConstructorEdge(const Puzzle &original) {
 bool Tester::testCopyConstructorNormal(const Puzzle &original) {
     Puzzle copy(original);
 
-    if (copy.m_puzzle != original.m_puzzle
-        && copy.m_numRows == original.m_numRows && copy.m_numCols == original.m_numCols) {
-        //proceed if the objects point to different memory locations and the dimensions match
-        for (int i = 0; i < copy.m_numRows; i++) {
-            for (int j = 0; j < copy.m_numCols; j++) {
-                if (copy.m_puzzle[i] != original.m_puzzle[i] && copy.m_puzzle[i][j] == original.m_puzzle[i][j]) {
-                    //test passes if all row pointers are different and all the array data is identical
-                    return true;
-                }
+    for (int i = 0; i < copy.m_numRows; i++) {
+        for (int j = 0; j < copy.m_numCols; j++) {
+            if (copy.m_puzzle == original.m_puzzle ||
+                copy.m_numRows != original.m_numRows || copy.m_numCols != original.m_numCols ||
+                copy.m_puzzle[i] == original.m_puzzle[i] || copy.m_puzzle[i][j] != original.m_puzzle[i][j]) {
+                //test fails if the objects point to the same memory location, the dimensions do not match, ...
+                //... any of the row pointers are the same, or if any of the array data is different
+                return false;
             }
         }
     }
-    //test fails otherwise
-    return false;
+    //test passes otherwise
+    return true;
 }
 
 
@@ -311,23 +319,92 @@ bool Tester::testAssignmentOperatorNormal(const Puzzle &original) {
 
     copy = original;
 
-    if (copy.m_puzzle != original.m_puzzle
-        && copy.m_numRows == original.m_numRows && copy.m_numCols == original.m_numCols) {
-        //proceed if the objects point to different memory locations and the dimensions match
-        for (int i = 0; i < copy.m_numRows; i++) {
-            for (int j = 0; j < copy.m_numCols; j++) {
-                if (copy.m_puzzle[i] != original.m_puzzle[i] && copy.m_puzzle[i][j] == original.m_puzzle[i][j]) {
-                    //test passes if all row pointers are different and all the array data is identical
-                    return true;
-                }
+    for (int i = 0; i < copy.m_numRows; i++) {
+        for (int j = 0; j < copy.m_numCols; j++) {
+            if (copy.m_puzzle == original.m_puzzle ||
+                copy.m_numRows != original.m_numRows || copy.m_numCols != original.m_numCols ||
+                copy.m_puzzle[i] == original.m_puzzle[i] || copy.m_puzzle[i][j] != original.m_puzzle[i][j]) {
+                //test fails if the objects point to the same memory location, the dimensions do not match, ...
+                //... any of the row pointers are the same, or if any of the array data is different
+                return false;
             }
         }
     }
-    //test fails otherwise
-    return false;
+    //test passes otherwise
+    return true;
 }
 
 //TODO: appendRight test functions
+bool Tester::testAppendRightError(const Puzzle &puzzleRight) {
+    //left puzzle has a different number of rows
+    Puzzle puzzleFinal(15, 16);
+    puzzleFinal.fill(11 + time(0));
 
+    //save current dimensions to check against later
+    int initialRows = puzzleFinal.m_numRows;
+    int initialCols = puzzleFinal.m_numCols;
+
+    //save the current data of puzzleFinal in puzzleInitial
+    Puzzle puzzleInitial;
+    puzzleInitial = puzzleFinal;
+
+    puzzleFinal.appendRight(puzzleRight);
+
+    for (int i = 0; i < puzzleFinal.m_numRows; i++) {
+        for (int j = 0; j < puzzleRight.m_numCols; j++) {
+            if (puzzleFinal.m_numRows != initialRows || puzzleFinal.m_numCols != initialCols ||
+                puzzleFinal.m_puzzle[i][j] != puzzleInitial.m_puzzle[i][j]) {
+                return false;
+            }
+        }
+    }
+    return true;
+}
+
+bool Tester::testAppendRightNormal(const Puzzle &puzzleRight) {
+    Puzzle puzzleFinal;
+    puzzleFinal.fill(12 + time(0));
+
+    //save the data of each puzzle
+
+    puzzleFinal.appendRight(puzzleRight);
+
+    return false;
+}
+
+bool Tester::testAppendRightNormalToEmpty(const Puzzle &puzzleRight) {
+    //make empty object
+    Puzzle puzzleFinal(-2, 0);
+
+    //save the data of each puzzle
+
+    puzzleFinal.appendRight(puzzleRight);
+
+    return false;
+}
+
+bool Tester::testAppendRightEmptyToNormal(const Puzzle &puzzleRight) {
+    Puzzle puzzleFinal;
+    puzzleFinal.fill(13 + time(0));
+
+    //save the data of each puzzle
+
+    puzzleFinal.appendRight(puzzleRight);
+
+    return false;
+}
+
+bool Tester::testAppendRightToSelf(const Puzzle &puzzleRight) {
+    //make object with dimensions identical to the one passed-in
+    Puzzle puzzleFinal(puzzleRight.m_numRows, puzzleRight.m_numCols);
+
+    //fill object with same data
+    puzzleFinal = puzzleRight;
+
+    puzzleFinal.appendRight(puzzleRight);
+
+    return false;
+}
 
 //TODO: appendBottom test functions
+
